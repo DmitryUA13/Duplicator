@@ -8,7 +8,7 @@ function mainAlgorithm(sheetName = "2023-04") {
   const presetation = sheet.getRange(presetationRange).getValues(); //Массив с настройками
   const dayOfMonthNumberVals = sheet.getRange(dayOfMonthNumbersRange).getValues(); //Массив с номером дня месяца
   const arrOfDayasOfWeek = getDaysOfWeekArray(sheetName); // массив с днями недели
-  let arrRes = getFirstLevelArrTemplates(sheetName, dataTemlate, presetation, arrOfDayasOfWeek, dataTemlateDtataValidations) //первично обработанный массив с шаблонами
+  let arrRes = getFirstLevelArrTemplates(sheetName, dataTemlate, presetation,dataTemlateDtataValidations) //первично обработанный массив с шаблонами
   const [arrTemplates, arrTemplatesDataValidations] = arrRes;
   let dayOfMonthNumber = dayOfMonthNumberVals[0].map(date => {
     return Utilities.formatDate(new Date(date), SpreadsheetApp.getActive().getSpreadsheetTimeZone(), "d");
@@ -17,8 +17,8 @@ function mainAlgorithm(sheetName = "2023-04") {
 
   /*Вторая часть функции - формирование массива для итоговой записи в таблицу */
   let res = getFulldataToSet(arrTemplates, presetation, arrOfDayasOfWeek, numDaysOfMonth, arrTemplatesDataValidations);
-  Logger.log("res")
-  Logger.log(res)
+  // Logger.log("res")
+  // Logger.log(res)
   return res;
 }
 
@@ -32,28 +32,27 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
       const reg = new RegExp('\\d', 'gm');
       const arrRepitWeek = repeatFormula.toString().match(reg);
       let testArr = new Array(arrOfDayasOfWeek.length - 1).fill("");
+      let newArr = [];
+      let newArrDataValidations = [];
+      let arrDataTmpr = [];
+      let arrDataTmprDataValidations = [];
+
 
       if (repeatFormula == "Monthly") {
-        
-
-        
-        let newArr = [];
         
         if (whichDays == "Everyday" || whichDays == "") {
           let countDaysAvailibleToFill = arrOfDayasOfWeek.length;
           let dataInCellsFull = arrTemplates[i].filter(item => item != "").length;
-          let arrDataTmpr = [];
           if (reverse) {
             arrTemplates[i] = arrTemplates[i].reverse();
             for (let s = arrOfDayasOfWeek.length - 1; s >= 0; s--) {
-              Logger.log(s)
               if (countDaysAvailibleToFill > dataInCellsFull) {
                 newArr[s] = arrTemplates[i][s];
                 if(arrTemplates[i][s] != '') {dataInCellsFull-- };
                 countDaysAvailibleToFill--;
                 
 
-              } else if (countDaysAvailibleToFill == dataInCellsFull) {
+              } else if (countDaysAvailibleToFill == dataInCellsFull && arrDataTmpr.length == 0) {
                 arrDataTmpr = arrTemplates[i].slice(0,s).filter(item => item != "");
                 newArr[s] = arrDataTmpr.pop();
                 countDaysAvailibleToFill--;
@@ -636,7 +635,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
 *
 *
 */
-function getFirstLevelArrTemplates(sheetName, dataTemlate, presetation, arrOfDayasOfWeek, dataTemlateDtataValidations) {
+function getFirstLevelArrTemplates(sheetName, dataTemlate, presetation, dataTemlateDtataValidations) {
   const resArr = [];
   let arrResTemplate = []; // массив с шаблонами. Например, если в настройке указано Еженедельно,
   // то в строке с этим шаблоном хранится только 7 значений и так далее
@@ -676,12 +675,12 @@ function getFirstLevelArrTemplates(sheetName, dataTemlate, presetation, arrOfDay
         arrResTemplate.push(dataTemlate[i].slice(0, 7));
         arrResTemplateDataValidations.push(dataTemlateDtataValidations[i].slice(0, 7));
       } if (whichDays == "Workdays") {
-        arrResTemplate.push(dataTemlate[i].slice(0, 5));
-        arrResTemplateDataValidations.push(dataTemlateDtataValidations[i].slice(0, 5));
+        arrResTemplate.push([...dataTemlate[i].slice(0, 5), , ,]);
+        arrResTemplateDataValidations.push([...dataTemlateDtataValidations[i].slice(0, 5), , ,]);
       }
       if (whichDays == "Weekends") {
-        arrResTemplate.push(dataTemlate[i].slice(5, 7));
-        arrResTemplateDataValidations.push(dataTemlateDtataValidations[i].slice(5, 7));
+        arrResTemplate.push([, , , , ,...dataTemlate[i].slice(5, 7)]);
+        arrResTemplateDataValidations.push([, , , , ,...dataTemlateDtataValidations[i].slice(5, 7)]);
       }
       if (whichDays == "Skip Sunday") {
         dataTemlate[i][6] = '';
