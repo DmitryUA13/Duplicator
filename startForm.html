@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      input{
+        margin: 10px 0px;
+      }
+      input[type='month'] {
+        border-radius: 5px;
+        height: 30px;
+      }
+      .btn {
+        width: 150px;
+        height: 35px;
+        margin-bottom: 10px;
+        color: white;
+        font-size: 20px;
+        border-radius: 5px; 
+        border: none;
+        cursor: pointer;
+      }
+      #btn_ok {
+        background: rgb(7,0,130);
+        background: linear-gradient(90deg, rgba(7,0,130,1) 0%, rgba(23,55,191,1) 42%, rgba(1,18,170,1) 100%);
+      }
+      #btn_cancel {
+        background: rgb(218,0,0);
+        background: linear-gradient(90deg, rgba(218,0,0,1) 0%, rgba(236,1,1,1) 44%, rgba(196,0,0,1) 100%);
+      }
+      #succcessRes {
+        margin: 10px 0px;
+      }
+    </style>
+  </head>
+  <body>
+    <p>Select month</p>
+    <form id="myForm" onsubmit="sendData(this)">
+      <input type="month" name="month">
+      <input type="submit" value="Submit" id="btn_ok" class="btn">
+      <button id="btn_cancel" class="btn" onclick="google.script.host.close()">Cancel</button>
+    </form>
+      <div id="succcessRes"></div>
+    <script>
+      let minMonth = document.getElementsByName('month');
+      minMonth[0].setAttribute('min',getMinMaxMonth()[0]);
+      minMonth[0].setAttribute('max',getMinMaxMonth()[1]);
+      minMonth[0].setAttribute('value',getMinMaxMonth()[0]);
+
+/*getMinMaxMonth()
+*Returns an array of minimum (year-month) and maximum dates. 
+*This sets the date selection limit in the popup within the range of 1 year
+*Used to set the minimum value in the popup month input field.
+*The user cannot select the current month
+*/
+function getMinMaxMonth() {
+  const dateNow = new Date();
+  const minMonth = `${dateNow.getFullYear()}-0${dateNow.getMonth()+2}`;//string like 2023-02
+  const maxMonth = `${dateNow.getFullYear()+1}-0${dateNow.getMonth()+1}`;
+  return [minMonth,maxMonth];
+}
+
+/*
+*sendData(formData)
+*By click:
+*1. Sending data (month selected by the user)
+*2. We get the answer:
+*   2.1. If OK, then the delay is 3 seconds
+*    2.2. Otherwise, we display an error message in the popup
+*/
+function sendData(formData){
+  function closeDialog(res) {
+      let divSuccess = document.getElementById("succcessRes");
+      divSuccess.innerHTML = "Excellent! Now I'll do some magic!))";//Success message
+      setTimeout(() => google.script.host.close(), 100);
+  }
+  google.script.run.withSuccessHandler(closeDialog).mainFn(formData);
+  };    
+</script>
+  </body>
+</html>
