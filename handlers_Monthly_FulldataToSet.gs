@@ -1,10 +1,6 @@
 function getMontlyEveryday(arrTemplates, arrTemplatesDataValidations, dif = 0, reverse, s) {
   let arrDataTmpr = [];
   let arrDataTmprDataValidations = [];
-  Logger.log("ITTTT  arrTemplates")
-  Logger.log(arrTemplates)
-  Logger.log("ITTTT arrTemplatesDataValidations")
-  Logger.log(arrTemplatesDataValidations)
   if(reverse) {
     arrTemplates = arrTemplates.slice(0, dif);
     arrTemplatesDataValidations = arrTemplatesDataValidations.slice(0, dif);
@@ -20,9 +16,5 @@ function getMontlyEveryday(arrTemplates, arrTemplatesDataValidations, dif = 0, r
         counter++;
       }
   }
-  Logger.log("ITTTT  arrDataTmpr")
-  Logger.log(arrDataTmpr)
-  Logger.log("ITTTT arrDataTmprDataValidations")
-  Logger.log(arrDataTmprDataValidations)
   return [arrDataTmpr, arrDataTmprDataValidations];
 }

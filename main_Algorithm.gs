@@ -358,30 +358,16 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
           }
         }
 
-        Logger.log("END OF MONTHLY")
-        Logger.log(newArr)
         Logger.log(newArrDataValidations)
         arrToSet.push(newArr);
         arrToSetDataValidations.push(newArrDataValidations);
-        Logger.log("END OF MONTHLY arrToSet")
-        Logger.log(arrToSet)
-        Logger.log(arrToSetDataValidations)
       }
 
       if (repeatFormula.toString().startsWith("Weekly")) {
         if (arrRepitWeek == null) {
-          if (whichDays == "Everyday" || whichDays == "") {
-            getWeekEveryday(arrToSet, arrOfDayasOfWeek, arrTemplates, i, reverse);
-          }
-          if (whichDays == "Workdays") {
-            getWeekWorkDays(arrToSet, arrOfDayasOfWeek, arrTemplates, i, reverse);
-          }
-          if (whichDays == "Weekends") {
-            getWeekWeekends(arrToSet, arrOfDayasOfWeek, arrTemplates, i, reverse);
-          }
-          if (whichDays == "Skip Sunday") {
-            getWeekSkipSunday(arrToSet, arrOfDayasOfWeek, arrTemplates, i, reverse);
-          }
+          [newArr ,newArrDataValidations] = getWeekEveryday(arrToSet, arrOfDayasOfWeek, arrTemplates[i], reverse, arrTemplatesDataValidations[i]);
+          arrToSet.push(newArr);
+          arrToSetDataValidations.push(newArrDataValidations);
         } else if (arrRepitWeek != undefined) {
           let arrIndexesRes = [];
           for (let a = 0; a < arrRepitWeek.length; a++) {
@@ -549,7 +535,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
           }
           arrToSet.push(testArr);
         }
-
+      
       }
 
       if (repeatFormula.toString().startsWith("Every")) {
@@ -640,6 +626,14 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
           testArr.splice(arrOfDayasOfWeek.length)
         }
         arrToSet.push(testArr);
+        Logger.log("END OF MONTHLY")
+        Logger.log(newArr)
+        Logger.log(newArrDataValidations)
+        arrToSet.push(newArr);
+        arrToSetDataValidations.push(newArrDataValidations);
+        Logger.log("END OF MONTHLY arrToSet")
+        Logger.log(arrToSet)
+        Logger.log(arrToSetDataValidations)
       }
       if (repeatFormula == "") {
         arrToSet.push([""])
@@ -699,12 +693,12 @@ function getFirstLevelArrTemplates(sheetName, dataTemlate, presetation, dataTeml
         arrResTemplate.push(dataTemlate[i].slice(0, 7));
         arrResTemplateDataValidations.push(dataTemlateDtataValidations[i].slice(0, 7));
       } if (whichDays == "Workdays") {
-        arrResTemplate.push([...dataTemlate[i].slice(0, 5), , ,]);
-        arrResTemplateDataValidations.push([...dataTemlateDtataValidations[i].slice(0, 5), , ,]);
+        arrResTemplate.push([...dataTemlate[i].slice(0, 5),"" ,"" ]);
+        arrResTemplateDataValidations.push([...dataTemlateDtataValidations[i].slice(0, 5),"","" ]);
       }
       if (whichDays == "Weekends") {
-        arrResTemplate.push([, , , , , ...dataTemlate[i].slice(5, 7)]);
-        arrResTemplateDataValidations.push([, , , , , ...dataTemlateDtataValidations[i].slice(5, 7)]);
+        arrResTemplate.push(["","" ,"" ,"" ,"" , ...dataTemlate[i].slice(5, 7)]);
+        arrResTemplateDataValidations.push(["","" ,"" ,"" ,"" , ...dataTemlateDtataValidations[i].slice(5, 7)]);
       }
       if (whichDays == "Skip Sunday") {
         dataTemlate[i][6] = '';
