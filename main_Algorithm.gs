@@ -37,7 +37,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
       let whichDays = presetation[i][0];
       const reg = new RegExp('\\d', 'gm');
       const arrRepitWeek = repeatFormula.toString().match(reg);
-      let testArr = new Array(arrOfDayasOfWeek.length - 1).fill("");
+
 
 
       if (repeatFormula == "Monthly") {
@@ -303,7 +303,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   newArrDataValidations[s] = null;
                 }
               } else {
-                if (arrDataTmpr.length == 0) { 
+                if (arrDataTmpr.length == 0) {
                   [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset + 1, reverse, s);
                 }
                 if (arrOfDayasOfWeek[s] != 0) {
@@ -358,184 +358,48 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
           }
         }
 
-        Logger.log(newArrDataValidations)
+
         arrToSet.push(newArr);
         arrToSetDataValidations.push(newArrDataValidations);
       }
 
       if (repeatFormula.toString().startsWith("Weekly")) {
         if (arrRepitWeek == null) {
-          [newArr ,newArrDataValidations] = getWeekEveryday(arrToSet, arrOfDayasOfWeek, arrTemplates[i], reverse, arrTemplatesDataValidations[i]);
+          [newArr, newArrDataValidations] = getWeekEveryday(arrToSet, arrOfDayasOfWeek, arrTemplates[i], reverse, arrTemplatesDataValidations[i], whichDays);
           arrToSet.push(newArr);
           arrToSetDataValidations.push(newArrDataValidations);
         } else if (arrRepitWeek != undefined) {
+          let newtArr = new Array(arrOfDayasOfWeek.length).fill("");
+          let newArrDataValidations = new Array(arrOfDayasOfWeek.length).fill("");
           let arrIndexesRes = [];
-          for (let a = 0; a < arrRepitWeek.length; a++) {
-            let indexStartWeek = getInd(arrRepitWeek[a], arrOfDayasOfWeek)
-            if (whichDays == "Everyday" || whichDays == "") {
-              if (reverse) {
-                let findedIndexes = getArrIndexes(findIndex = 1, arrOfDayasOfWeek);
-                findedIndexes.reverse();
-                findedIndexes.map((item, index) => {
-                  let difference = (numDaysOfMonth - item) / 7 > 1 ? true : false;
-                  if (!difference) {
-                    findedIndexes.shift();
-                  } a
-                })
-
-                findedIndexes.filter((item, index) => {
-                  if (index == arrRepitWeek[a] - 1) {
-                    return arrIndexesRes.push(item);;
-                  }
-                })
-
-                arrIndexesRes.map(item => {
-                  arrTemplates[i].map((item, indexTempl) => {
-                    if (testArr.length < arrOfDayasOfWeek.length) {
-                      testArr[arrIndexesRes[a] + indexTempl] = item;
-                    }
-                  })
-                })
-              } else {
-                arrTemplates[i].map((item, indexTempl) => {
-                  if (testArr.length < arrOfDayasOfWeek.length) {
-                    testArr[indexStartWeek + indexTempl] = item;
-                  }
-                })
-              }
-            }
-
-            if (whichDays == "Workdays") {
-              if (reverse) {
-                let findedIndexes = getArrIndexes(findIndex = 1, arrOfDayasOfWeek);
-                findedIndexes.reverse();
-                findedIndexes.map((item, index) => {
-                  let difference = (numDaysOfMonth - item) / 7 > 1 ? true : false;
-                  if (!difference) {
-                    findedIndexes.shift();
-                  } a
-                })
-
-                findedIndexes.filter((item, index) => {
-                  if (index == arrRepitWeek[a] - 1) {
-                    return arrIndexesRes.push(item);;
-                  }
-                })
-
-                arrIndexesRes.map(item => {
-                  let counter = 0;
-                  arrTemplates[i].map((item, indexTempl) => {
-                    counter++;
-                    if (counter <= 5 && testArr.length < arrOfDayasOfWeek.length) {
-                      testArr[arrIndexesRes[a] - 1 + indexTempl] = item;
-                    }
-                  })
-                })
-              } else {
+          arrIndexesRes = getReversedIndexsesStartWeek(arrOfDayasOfWeek, arrRepitWeek, reverse)
+              arrIndexesRes.map(item => {
                 let counter = 0;
-                arrTemplates[i].map((item, indexTempl) => {
-                  counter++;
-                  if (counter <= 5 && testArr.length < arrOfDayasOfWeek.length) {
-                    testArr[indexStartWeek + indexTempl] = item;
-                  }
+                arrTemplates[i].map(itemArrTemplate => {
+                  newtArr[item + counter] = itemArrTemplate;
+                  counter++
                 })
-              }
-            }
-
-            if (whichDays == "Weekends") {
-              if (reverse) {
-                let findedIndexes = getArrIndexes(findIndex = 1, arrOfDayasOfWeek);
-                findedIndexes.reverse();
-                findedIndexes.map((item, index) => {
-                  let difference = (numDaysOfMonth - item) / 7 > 1 ? true : false;
-                  if (!difference) {
-                    findedIndexes.shift();
-                  }
+                counter = 0;
+                arrTemplatesDataValidations[i].map(itemArrTemplateDatavalidations => {
+                  newArrDataValidations[item + counter] = itemArrTemplateDatavalidations;
+                  counter++
                 })
+              })
+            
+            Logger.log("newtArr")
+            Logger.log(newtArr)
+            Logger.log("newtArr")
+            Logger.log(newArrDataValidations)
 
-                findedIndexes.filter((item, index) => {
-                  if (index == arrRepitWeek[a] - 1) {
-                    return arrIndexesRes.push(item);
-                  }
-                })
-
-                arrIndexesRes.map(item => {
-                  isStop = () => {
-                    return arrOfDayasOfWeek.length - indexStartWeek > counter ? true : false
-
-                  }
-                  let counter = 5;
-                  arrTemplates[i].map((item, indexTempl) => {
-                    counter++;
-                    if (counter <= 7 && testArr.length < arrOfDayasOfWeek.length && isStop()) {
-                      testArr[arrIndexesRes[a] - 1 + counter] = item;
-                    }
-                  })
-                })
-              } else {
-                isStop = () => {
-                  return arrOfDayasOfWeek.length - indexStartWeek > counter ? true : false
-
-                }
-                let counter = 5;
-                arrTemplates[i].map((item, indexTempl) => {
-                  counter++;
-                  if (counter <= 7 && testArr.length < arrOfDayasOfWeek.length && isStop()) {
-                    testArr[indexStartWeek - 1 + counter] = item;
-                  }
-                })
-              }
-            }
-
-
-
-            if (whichDays == "Skip Sunday") {
-              if (reverse) {
-                let findedIndexes = getArrIndexes(findIndex = 1, arrOfDayasOfWeek);
-                findedIndexes.reverse();
-                findedIndexes.map((item, index) => {
-                  let difference = (numDaysOfMonth - item) / 7 > 1 ? true : false;
-                  if (!difference) {
-                    findedIndexes.shift();
-                  }
-                })
-
-                findedIndexes.filter((item, index) => {
-                  if (index == arrRepitWeek[a] - 1) {
-                    return arrIndexesRes.push(item);;
-                  }
-                })
-
-                arrIndexesRes.map(item => {
-                  isStop = () => {
-                    return arrOfDayasOfWeek.length - indexStartWeek > counter ? true : false;
-                  }
-                  let counter = 0;
-                  arrTemplates[i].map((item, indexTempl) => {
-                    counter++;
-                    if (counter <= 6 && testArr.length < arrOfDayasOfWeek.length && isStop()) {
-                      testArr[arrIndexesRes[a] - 1 + counter] = item;
-                    }
-                  })
-                })
-              } else {
-                isStop = () => {
-                  return arrOfDayasOfWeek.length - indexStartWeek > counter ? true : false;
-                }
-                let counter = 1;
-                arrTemplates[i].map((item, indexTempl) => {
-                  if (counter <= 7 && testArr.length < arrOfDayasOfWeek.length && isStop()) {
-                    testArr[indexStartWeek - 1 + counter] = item;
-                  }
-                  counter++;
-                })
-              }
-            }
-
-          }
-          arrToSet.push(testArr);
+          
+          arrToSet.push(newtArr);
+          // arrToSetDataValidations.push(newtArrDataValidations);
+          // Logger.log("newtArr")
+          // Logger.log(newtArr)
+          // arrToSetDataValidations.push(newtArrDataValidations);
+          // Logger.log(newtArrDataValidations)
         }
-      
+
       }
 
       if (repeatFormula.toString().startsWith("Every")) {
@@ -544,16 +408,16 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
 
           let counter = 0;
           arrOfDayasOfWeek.map((itemArr, indexArr) => {
-            if (testArr.length < arrOfDayasOfWeek.length) {
+            if (newtArr.length < arrOfDayasOfWeek.length) {
 
               arrTemplates[i].map((item, indexTempl) => {
-                testArr[counter] = item;
+                newtArr[counter] = item;
                 counter++;
               })
             }
           })
-          if (testArr.length > arrOfDayasOfWeek.length) {
-            testArr.splice(arrOfDayasOfWeek.length)
+          if (newtArr.length > arrOfDayasOfWeek.length) {
+            newtArr.splice(arrOfDayasOfWeek.length)
           }
         }
 
@@ -576,7 +440,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
           }
 
           everyArr.splice(arrOfDayasOfWeek.length);
-          testArr = everyArr;
+          newtArr = everyArr;
         }
 
         if (whichDays == "Weekends") {
@@ -598,7 +462,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
           }
 
           everyArr.splice(arrOfDayasOfWeek.length);
-          testArr = everyArr;
+          newtArr = everyArr;
         }
 
         if (whichDays == "Skip Sunday") {
@@ -620,12 +484,12 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
           }
 
           everyArr.splice(arrOfDayasOfWeek.length);
-          testArr = everyArr;
+          newtArr = everyArr;
         }
-        if (testArr.length > arrOfDayasOfWeek.length) {
-          testArr.splice(arrOfDayasOfWeek.length)
+        if (newtArr.length > arrOfDayasOfWeek.length) {
+          newtArr.splice(arrOfDayasOfWeek.length)
         }
-        arrToSet.push(testArr);
+        arrToSet.push(newtArr);
         Logger.log("END OF MONTHLY")
         Logger.log(newArr)
         Logger.log(newArrDataValidations)
@@ -693,12 +557,12 @@ function getFirstLevelArrTemplates(sheetName, dataTemlate, presetation, dataTeml
         arrResTemplate.push(dataTemlate[i].slice(0, 7));
         arrResTemplateDataValidations.push(dataTemlateDtataValidations[i].slice(0, 7));
       } if (whichDays == "Workdays") {
-        arrResTemplate.push([...dataTemlate[i].slice(0, 5),"" ,"" ]);
-        arrResTemplateDataValidations.push([...dataTemlateDtataValidations[i].slice(0, 5),"","" ]);
+        arrResTemplate.push([...dataTemlate[i].slice(0, 5), "", ""]);
+        arrResTemplateDataValidations.push([...dataTemlateDtataValidations[i].slice(0, 5), "", ""]);
       }
       if (whichDays == "Weekends") {
-        arrResTemplate.push(["","" ,"" ,"" ,"" , ...dataTemlate[i].slice(5, 7)]);
-        arrResTemplateDataValidations.push(["","" ,"" ,"" ,"" , ...dataTemlateDtataValidations[i].slice(5, 7)]);
+        arrResTemplate.push(["", "", "", "", "", ...dataTemlate[i].slice(5, 7)]);
+        arrResTemplateDataValidations.push(["", "", "", "", "", ...dataTemlateDtataValidations[i].slice(5, 7)]);
       }
       if (whichDays == "Skip Sunday") {
         dataTemlate[i][6] = '';
