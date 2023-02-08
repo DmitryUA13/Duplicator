@@ -41,12 +41,12 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
 
 
       if (repeatFormula == "Monthly") {
+        let difference = arrTemplates[i].length - arrOfDayasOfWeek.length;
 
         if (whichDays == "Everyday" || whichDays == "") {
-
-          let countDaysAvailibleToFill = arrOfDayasOfWeek.length;
           let dataInCellsFull = arrTemplates[i].filter(item => item != "").length;
-          let difference = arrTemplates[i].length - arrOfDayasOfWeek.length;
+          let countDaysAvailibleToFill = arrOfDayasOfWeek.length;
+
           if (reverse) {
             arrTemplates[i] = arrTemplates[i].reverse();
             arrTemplatesDataValidations[i] = arrTemplatesDataValidations[i].reverse();
@@ -105,77 +105,82 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
           let offset = 0;
           if (reverse) {
             arrTemplates[i] = arrTemplates[i].reverse();
+            arrTemplatesDataValidations[i] = arrTemplatesDataValidations[i].reverse();
             for (let s = arrOfDayasOfWeek.length - 1; s >= 0; s--) {
               if (countDaysAvailibleToFill > dataInCellsFull) {
                 if (arrOfDayasOfWeek[s] != 0 && arrOfDayasOfWeek[s] != 6) {
-                  newArr[s] = arrTemplates[i][s + offset];
+                  newArr[s] = arrTemplates[i][s + difference + offset];
+                  newArrDataValidations[s] = arrTemplatesDataValidations[i][s + difference + offset];
                   if (arrTemplates[i][s + offset] != "") { dataInCellsFull--; }
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                   offset++;
                 }
 
               } else if (countDaysAvailibleToFill == dataInCellsFull) {
-                arrDataTmpr = arrTemplates[i].slice(0, s + offset).filter(item => item != "");
-                if (arrOfDayasOfWeek[s] != 0 && arrOfDayasOfWeek[s] != 6) {
+                [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset + 1, reverse, s);
+                if (arrOfDayasOfWeek[s] != 0 && arrOfDayasOfWeek[s] != 6 && arrDataTmpr.length == 0) {
                   newArr[s] = arrDataTmpr.pop();
-                  countDaysAvailibleToFill--;
+                  newArrDataValidations[s] = arrTemplatesDataValidations[i].pop();
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                 }
               } else {
-                if (arrDataTmpr.length == 0) { //если список в последнем условии пуст, значит ячеек для заполнения меньше, чем есть данных. Значит пропускаются все условия и попадаем в этот елс. Значит берем только непустые значения из массива шаблона и вставляем сколько есть места
-                  arrDataTmpr = arrTemplates[i].filter(item => item != "");
+                if (arrDataTmpr.length == 0) {
+                  [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset + 1, reverse, s);
                 }
                 if (arrOfDayasOfWeek[s] != 0 && arrOfDayasOfWeek[s] != 6) {
                   newArr[s] = arrDataTmpr.pop();
-                  countDaysAvailibleToFill--;
+                  newArrDataValidations[s] = arrTemplatesDataValidations[i].pop();
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                 }
               }
             }
           } else {
             for (let s = 0; s < arrOfDayasOfWeek.length; s++) {
-              // Logger.log("arrOfDayasOfWeek.length: "+ arrOfDayasOfWeek.length)
-              // Logger.log("countDaysAvailibleToFill: " + countDaysAvailibleToFill + ". dataInCellsFull: " + dataInCellsFull+ ". s: " + s)
-              // Logger.log("arrTemplates[i][s - offset]: " + arrTemplates[i][s - offset] + ". newArr[s]: " + newArr)
-              // Logger.log(countDaysAvailibleToFill > dataInCellsFull)
-              // Logger.log("arrDataTmpr > " +  arrDataTmpr);
               if (countDaysAvailibleToFill > dataInCellsFull) {
                 if (arrOfDayasOfWeek[s] != 0 && arrOfDayasOfWeek[s] != 6) {
                   newArr[s] = arrTemplates[i][s - offset];
+                  newArrDataValidations[s] = arrTemplatesDataValidations[i][s - offset];
                   if (arrTemplates[i][s - offset] != "") { dataInCellsFull--; }
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                   offset++;
                 }
 
-              } else if (countDaysAvailibleToFill == dataInCellsFull) {
-                arrDataTmpr = arrTemplates[i].slice(s - offset).filter(item => item != "");
+              } else if (countDaysAvailibleToFill == dataInCellsFull && arrDataTmpr.length == 0) {
+                [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s - offset, reverse, s);
                 if (arrOfDayasOfWeek[s] != 0 && arrOfDayasOfWeek[s] != 6) {
                   newArr[s] = arrDataTmpr.shift();
+                  newArrDataValidations[s] = arrTemplatesDataValidations[i].shift();
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                 }
               } else {
-                if (arrDataTmpr.length == 0) { //если список в последнем условии пуст, значит ячеек для заполнения меньше, чем есть данных. Значит пропускаются все условия и попадаем в этот елс. Значит берем только непустые значения из массива шаблона и вставляем сколько есть места
-                  arrDataTmpr = arrTemplates[i].filter(item => item != "");
+                if (arrDataTmpr.length == 0) {
+                  [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s - offset, reverse, s);
                 }
                 if (arrOfDayasOfWeek[s] != 0 && arrOfDayasOfWeek[s] != 6) {
                   newArr[s] = arrDataTmpr.shift();
+                  newArrDataValidations[s] = arrTemplatesDataValidations[i].shift();
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                 }
               }
             }
 
           }
-          // arrToSet.push(newArr);
 
         } else if (whichDays == "Weekends") {
           let countDaysAvailibleToFill = arrOfDayasOfWeek.filter(item => (item == 0 || item == 6)).length;
@@ -185,77 +190,84 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
           let offset = 0;
           if (reverse) {
             arrTemplates[i] = arrTemplates[i].reverse();
+            arrTemplatesDataValidations[i] = arrTemplatesDataValidations[i].reverse();
             for (let s = arrOfDayasOfWeek.length - 1; s >= 0; s--) {
               if (countDaysAvailibleToFill > dataInCellsFull) {
                 if (arrOfDayasOfWeek[s] == 0 || arrOfDayasOfWeek[s] == 6) {
-                  newArr[s] = arrTemplates[i][s + offset];
+                  newArr[s] = arrTemplates[i][s + difference + offset];
+                  newArrDataValidations[s] = arrTemplatesDataValidations[i][s + difference + offset];
                   if (arrTemplates[i][s + offset] != "") { dataInCellsFull--; }
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                   offset++;
                 }
 
-              } else if (countDaysAvailibleToFill == dataInCellsFull) {
-                arrDataTmpr = arrTemplates[i].slice(0, s + offset).filter(item => item != "");
+              } else if (countDaysAvailibleToFill == dataInCellsFull && arrDataTmpr.length == 0) {
+                [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset + 1, reverse, s);
                 if (arrOfDayasOfWeek[s] == 0 || arrOfDayasOfWeek[s] == 6) {
                   newArr[s] = arrDataTmpr.pop();
+                  newArrDataValidations[s] = arrDataTmprDataValidations.pop();
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                 }
               } else {
-                if (arrDataTmpr.length == 0) { //если список в последнем условии пуст, значит ячеек для заполнения меньше, чем есть данных. Значит пропускаются все условия и попадаем в этот елс. Значит берем только непустые значения из массива шаблона и вставляем сколько есть места
-                  arrDataTmpr = arrTemplates[i].filter(item => item != "");
+                if (arrDataTmpr.length == 0) {
+                  [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset + 1, reverse, s);
                 }
                 if (arrOfDayasOfWeek[s] == 0 || arrOfDayasOfWeek[s] == 6) {
                   newArr[s] = arrDataTmpr.pop();
+                  newArrDataValidations[s] = arrDataTmprDataValidations.pop();
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                 }
               }
             }
           } else {
             for (let s = 0; s < arrOfDayasOfWeek.length; s++) {
-              // Logger.log("arrOfDayasOfWeek.length: "+ arrOfDayasOfWeek.length)
-              // Logger.log("countDaysAvailibleToFill: " + countDaysAvailibleToFill + ". dataInCellsFull: " + dataInCellsFull+ ". s: " + s)
-              // Logger.log("arrTemplates[i][s - offset]: " + arrTemplates[i][s - offset] + ". newArr[s]: " + newArr)
-              // Logger.log(countDaysAvailibleToFill > dataInCellsFull)
-              // Logger.log("arrDataTmpr > " +  arrDataTmpr);
               if (countDaysAvailibleToFill > dataInCellsFull) {
                 if (arrOfDayasOfWeek[s] == 0 || arrOfDayasOfWeek[s] == 6) {
                   newArr[s] = arrTemplates[i][s - offset];
+                  newArrDataValidations[s] = arrTemplatesDataValidations[i][s - offset];
                   if (arrTemplates[i][s - offset] != "") { dataInCellsFull--; }
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                   offset++;
                 }
 
-              } else if (countDaysAvailibleToFill == dataInCellsFull) {
-                arrDataTmpr = arrTemplates[i].slice(s - offset).filter(item => item != "");
+              } else if (countDaysAvailibleToFill == dataInCellsFull && arrDataTmpr.length == 0) {
+                [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s - offset, reverse, s);
                 if (arrOfDayasOfWeek[s] == 0 || arrOfDayasOfWeek[s] == 6) {
                   newArr[s] = arrDataTmpr.shift();
+                  newArrDataValidations[s] = arrDataTmprDataValidations.shift();
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                 }
               } else {
-                if (arrDataTmpr.length == 0) { //если список в последнем условии пуст, значит ячеек для заполнения меньше, чем есть данных. Значит пропускаются все условия и попадаем в этот елс. Значит берем только непустые значения из массива шаблона и вставляем сколько есть места
-                  arrDataTmpr = arrTemplates[i].filter(item => item != "");
+                if (arrDataTmpr.length == 0) {
+                  [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s - offset, reverse, s);
                 }
                 if (arrOfDayasOfWeek[s] == 0 || arrOfDayasOfWeek[s] == 6) {
                   newArr[s] = arrDataTmpr.shift();
+                  newArrDataValidations[s] = arrDataTmprDataValidations.shift();
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                 }
               }
             }
 
           }
-          // arrToSet.push(newArr);
 
         } else if (whichDays == "Skip Sunday") {
 
@@ -266,34 +278,41 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
           let offset = 0;
           if (reverse) {
             arrTemplates[i] = arrTemplates[i].reverse();
+            arrTemplatesDataValidations[i] = arrTemplatesDataValidations[i].reverse();
             for (let s = arrOfDayasOfWeek.length - 1; s >= 0; s--) {
               if (countDaysAvailibleToFill > dataInCellsFull) {
                 if (arrOfDayasOfWeek[s] != 0) {
-                  newArr[s] = arrTemplates[i][s + offset];
+                  newArr[s] = arrTemplates[i][s + difference + offset];
+                  newArrDataValidations[s] = arrTemplatesDataValidations[i][s + difference + offset];
                   if (arrTemplates[i][s + offset] != "") { dataInCellsFull--; }
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                   offset++;
                 }
 
-              } else if (countDaysAvailibleToFill == dataInCellsFull) {
-                arrDataTmpr = arrTemplates[i].slice(0, s + offset).filter(item => item != "");
+              } else if (countDaysAvailibleToFill == dataInCellsFull && arrDataTmpr.length == 0) {
+                [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset + 1, reverse, s);
                 if (arrOfDayasOfWeek[s] != 0) {
                   newArr[s] = arrDataTmpr.pop();
+                  newArrDataValidations[s] = arrDataTmprDataValidations.pop();
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                 }
               } else {
-                if (arrDataTmpr.length == 0) { //если список в последнем условии пуст, значит ячеек для заполнения меньше, чем есть данных. Значит пропускаются все условия и попадаем в этот елс. Значит берем только непустые значения из массива шаблона и вставляем сколько есть места
-                  arrDataTmpr = arrTemplates[i].filter(item => item != "");
+                if (arrDataTmpr.length == 0) { 
+                  [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset + 1, reverse, s);
                 }
                 if (arrOfDayasOfWeek[s] != 0) {
                   newArr[s] = arrDataTmpr.pop();
+                  newArrDataValidations[s] = arrDataTmprDataValidations.pop();
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                 }
               }
             }
@@ -302,48 +321,51 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
               if (countDaysAvailibleToFill > dataInCellsFull) {
                 if (arrOfDayasOfWeek[s] != 0) {
                   newArr[s] = arrTemplates[i][s - offset];
+                  newArrDataValidations[s] = arrTemplatesDataValidations[i][s - offset];
                   if (arrTemplates[i][s - offset] != "") { dataInCellsFull--; }
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                   offset++;
                 }
 
-              } else if (countDaysAvailibleToFill == dataInCellsFull) {
-                arrDataTmpr = arrTemplates[i].slice(s - offset).filter(item => item != "");
+              } else if (countDaysAvailibleToFill == dataInCellsFull && arrDataTmpr.length == 0) {
+                [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s - offset, reverse, s);
                 if (arrOfDayasOfWeek[s] != 0) {
                   newArr[s] = arrDataTmpr.shift();
+                  newArrDataValidations[s] = arrDataTmprDataValidations.shift();
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                 }
               } else {
-                if (arrDataTmpr.length == 0) { //если список в последнем условии пуст, значит ячеек для заполнения меньше, чем есть данных. Значит пропускаются все условия и попадаем в этот елс. Значит берем только непустые значения из массива шаблона и вставляем сколько есть места
-                  arrDataTmpr = arrTemplates[i].filter(item => item != "");
+                if (arrDataTmpr.length == 0) {
+                  [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s - offset, reverse, s);
                 }
                 if (arrOfDayasOfWeek[s] != 0) {
                   newArr[s] = arrDataTmpr.shift();
+                  newArrDataValidations[s] = arrDataTmprDataValidations.shift();
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
+                  newArrDataValidations[s] = null;
                 }
               }
             }
 
           }
-          // arrToSet.push(newArr);
-
-
         }
 
-         Logger.log("END OF MONTHLY")
-          Logger.log(newArr)
-          Logger.log(newArrDataValidations)
-          arrToSet.push(newArr);
-          arrToSetDataValidations.push(newArrDataValidations);
-          Logger.log("END OF MONTHLY arrToSet")
-          Logger.log(arrToSet)
-          Logger.log(arrToSetDataValidations)
+        Logger.log("END OF MONTHLY")
+        Logger.log(newArr)
+        Logger.log(newArrDataValidations)
+        arrToSet.push(newArr);
+        arrToSetDataValidations.push(newArrDataValidations);
+        Logger.log("END OF MONTHLY arrToSet")
+        Logger.log(arrToSet)
+        Logger.log(arrToSetDataValidations)
       }
 
       if (repeatFormula.toString().startsWith("Weekly")) {
