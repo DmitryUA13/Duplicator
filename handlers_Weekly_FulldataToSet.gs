@@ -1,6 +1,4 @@
 function getWeekEveryday(arrToSet, arrOfDayasOfWeek, arrTemplates, reverse, arrTemplatesDataValidations, whichDays) {
-  let whichDaystoFn = whichDays;
-  Logger.log
   arrOfDayasOfWeek = arrOfDayasOfWeek.map(item => {
     return item == 0 ? 7 : item;
   })
@@ -13,6 +11,7 @@ function getWeekEveryday(arrToSet, arrOfDayasOfWeek, arrTemplates, reverse, arrT
   let newArrDataValidations = arrOfDayasOfWeek.map(item => {
     return arrTemplatesDataValidations[item - 1];
   })
+
   return [newArr, newArrDataValidations];
 }
 
@@ -75,6 +74,7 @@ function getReversedIndexsesStartWeek(arrOfDayasOfWeek, arrRepitWeek, reverse) {
     })
 
   }
+  
   return arrIndexesRes;
 }
 

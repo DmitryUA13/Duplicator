@@ -22,12 +22,21 @@ function mainAlgorithm(sheetName = "2023-04") {
 }
 
 
-async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [], numDaysOfMonth, arrTemplatesDataValidations) {
+function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [], numDaysOfMonth, arrTemplatesDataValidations) {
   try {
     let arrToSet = []; // массив с собранными шаблонами
     let arrToSetDataValidations = [];
 
+  for(let h = 0; h < arrTemplates.length; h++) {
+    // Logger.log("Counter = " + h )
+    // Logger.log("arrTemplatesDataValidations Length = " + arrTemplatesDataValidations[h].length )
+    // Logger.log(arrTemplatesDataValidations[h])
+    // Logger.log("arrTemplates Length = " + arrTemplates[h].length )
+    // Logger.log(arrTemplates[h])
+  }
+
     for (let i = 0; i < arrTemplates.length; i++) {
+      
       let newArr = [];
       let newArrDataValidations = [];
       let arrDataTmpr = [];
@@ -37,13 +46,12 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
       let whichDays = presetation[i][0];
       const reg = new RegExp('\\d', 'gm');
       const arrRepitWeek = repeatFormula.toString().match(reg);
-
-
-
+    
       if (repeatFormula == "Monthly") {
         let difference = arrTemplates[i].length - arrOfDayasOfWeek.length;
 
         if (whichDays == "Everyday" || whichDays == "") {
+          Logger.log("Monthly Everyday")
           let dataInCellsFull = arrTemplates[i].filter(item => item != "").length;
           let countDaysAvailibleToFill = arrOfDayasOfWeek.length;
 
@@ -115,7 +123,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                   offset++;
                 }
 
@@ -126,7 +134,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   newArrDataValidations[s] = arrTemplatesDataValidations[i].pop();
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                 }
               } else {
                 if (arrDataTmpr.length == 0) {
@@ -137,7 +145,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   newArrDataValidations[s] = arrTemplatesDataValidations[i].pop();
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                 }
               }
             }
@@ -151,7 +159,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                   offset++;
                 }
 
@@ -163,7 +171,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                 }
               } else {
                 if (arrDataTmpr.length == 0) {
@@ -175,7 +183,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                 }
               }
             }
@@ -200,7 +208,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                   offset++;
                 }
 
@@ -212,7 +220,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                 }
               } else {
                 if (arrDataTmpr.length == 0) {
@@ -224,7 +232,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                 }
               }
             }
@@ -238,7 +246,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                   offset++;
                 }
 
@@ -250,7 +258,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                 }
               } else {
                 if (arrDataTmpr.length == 0) {
@@ -262,7 +270,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                 }
               }
             }
@@ -288,7 +296,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                   offset++;
                 }
 
@@ -300,7 +308,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                 }
               } else {
                 if (arrDataTmpr.length == 0) {
@@ -312,7 +320,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                 }
               }
             }
@@ -326,7 +334,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                   offset++;
                 }
 
@@ -338,7 +346,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                 }
               } else {
                 if (arrDataTmpr.length == 0) {
@@ -350,15 +358,13 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
-                  newArrDataValidations[s] = null;
+                  newArrDataValidations[s] = "";
                 }
               }
             }
 
           }
         }
-
-
         arrToSet.push(newArr);
         arrToSetDataValidations.push(newArrDataValidations);
       }
@@ -373,18 +379,23 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
           let newArrDataValidations = new Array(arrOfDayasOfWeek.length).fill("");
           let arrIndexesRes = [];
           arrIndexesRes = getReversedIndexsesStartWeek(arrOfDayasOfWeek, arrRepitWeek, reverse)
-          arrIndexesRes.map(item => {
-            let counter = 0;
-            arrTemplates[i].map(itemArrTemplate => {
-              newArr[item + counter] = itemArrTemplate;
-              counter++
-            })
-            counter = 0;
-            arrTemplatesDataValidations[i].map(itemArrTemplateDatavalidations => {
-              newArrDataValidations[item + counter] = itemArrTemplateDatavalidations;
-              counter++
-            })
-          })
+          if(arrIndexesRes.length >0){
+              arrIndexesRes.map(item => {
+                let counter = 0;
+                arrTemplates[i].map(itemArrTemplate => {
+                  newArr[item + counter] = itemArrTemplate;
+                  counter++
+                })
+                Logger.log(counter)
+                counter = 0;
+                Logger.log(arrTemplatesDataValidations[i])
+                arrTemplatesDataValidations[i].map(itemArrTemplateDatavalidations => {
+                  newArrDataValidations[item + counter] = itemArrTemplateDatavalidations;
+                  counter++
+                })
+              })
+          }
+          
           arrToSet.push(newArr);
           arrToSetDataValidations.push(newArrDataValidations);
         }
@@ -392,16 +403,12 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
       }
 
       if (repeatFormula.toString().startsWith("Every")) {
-
+        Logger.log("dasdad")
         if (whichDays == "Everyday" || whichDays == "") {
 
           let counter = 0;
-          Logger.log("arrTemplates[i]")
-          Logger.log(arrTemplates[i])
-          Logger.log("arrTemplatesDataValidations[i]")
-          Logger.log(arrTemplatesDataValidations[i])
-          for(let  s = 0; s< arrOfDayasOfWeek.length; s++) {
-            if(counter == arrTemplates[i].length ) {counter = 0}
+          for (let s = 0; s < arrOfDayasOfWeek.length; s++) {
+            if (counter == arrTemplates[i].length) { counter = 0 }
             newArr[s] = arrTemplates[i][counter];
             newArrDataValidations[s] = arrTemplatesDataValidations[i][counter];
             counter++;
@@ -421,7 +428,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
               }
             } else {
               newArr[f] = "";
-              newArrDataValidations[f] = null;
+              newArrDataValidations[f] = "";
             }
           }
 
@@ -440,7 +447,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
               }
             } else {
               newArr[f] = "";
-              newArrDataValidations[f] = null;
+              newArrDataValidations[f] = "";
             }
           }
 
@@ -448,6 +455,7 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
 
         if (whichDays == "Skip Sunday") {
           let counter = 0;
+          // Logger.log("counter "+arrTemplatesDataValidations[i])
           for (let f = 0; f <= arrOfDayasOfWeek.length - 1; f++) {
             if (arrOfDayasOfWeek[f] != 0) {
               newArr[f] = arrTemplates[i][counter];
@@ -459,19 +467,33 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
               }
             } else {
               newArr[f] = "";
-              newArrDataValidations[f] = null;
+              newArrDataValidations[f] = "";
             }
           }
 
         }
         arrToSet.push(newArr);
         arrToSetDataValidations.push(newArrDataValidations);
+        // Logger.log("Every newArr")
+        // Logger.log(newArr)
+        // Logger.log("Every newArrDataValidations")
+        // Logger.log(newArrDataValidations)
       }
       if (repeatFormula == "") {
-        arrToSet.push([""])
+        // Logger.log("ERROEOEOEOEO")
+        arrToSet.push(new Array(arrOfDayasOfWeek.length).fill(""))
+        arrToSetDataValidations.push(new Array(arrOfDayasOfWeek.length).fill(""));
       }
+    // Logger.log("arrToSet");
+    // Logger.log(arrToSet);
+    // Logger.log("arrToSetDataValidations");
+    // Logger.log(arrToSetDataValidations);
     }
-    return arrToSet;
+      
+    // Logger.log(repeatFormula + " " + whichDays + ". Номер строки: " + i);
+    // Logger.log(arrToSetDataValidations);
+
+    return [arrToSet, arrToSetDataValidations];
   } catch (e) {
     Logger.log(e)
   }
@@ -501,6 +523,8 @@ function getFirstLevelArrTemplates(sheetName, dataTemlate, presetation, dataTeml
 
     if (repeatFormula == "") {
       arrResTemplate.push([""]);
+      arrResTemplateDataValidations.push([""]);
+
     }
     if (repeatFormula == "Monthly") {
       let arr = dataTemlate[i].slice(0, 32);
