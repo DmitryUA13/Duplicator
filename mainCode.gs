@@ -17,17 +17,18 @@ function mainFn(formObjectObj) {
   const resAddSheetName = addSheet(formObjectObj); //if !underfined, the sheet has been created And the name of the sheet is stored in the variable (resAddSheet)
   let duplicatedSheet = mainSpSheet.getSheetByName(resAddSheetName);
   let trueRes = mainAlgorithm(resAddSheetName);
- let [endArrRes, endArrDataVakidationsRes] = trueRes;
- Logger.log(endArrRes);
- Logger.log(endArrDataVakidationsRes);
+ let [endArrRes, endArrDataValidationsRes] = trueRes;
+ endArrDataValidationsRes = endArrDataValidationsRes.map(item => item.map(it => it == '' ? it = null : it));
+ Logger.log(endArrDataValidationsRes);
 
   try {
     duplicatedSheet.getRange(4, 12, endArrRes.length, 40).clearContent().clearDataValidations();
     for (let i = 0; i < endArrRes[i].length; i++) {
       let endArr = [endArrRes[i]];
-      let endArrDatavalidations = [endArrDataVakidationsRes[i]];
-      duplicatedSheet.getRange(i + 4, 12, 1, endArrRes[i].length).setValues(endArr).setDataValidations(endArrDataVakidationsRes[i]);
+      // let endArrDatavalidations = [endArrDataValidationsRes[i]];
+      duplicatedSheet.getRange(i + 4, 12, 1, endArrRes[i].length).setValues(endArr);
     }
+    duplicatedSheet.getRange(4, 12, endArrDataValidationsRes.length, endArrDataValidationsRes[0].length).setDataValidations(endArrDataValidationsRes);
     duplicatedSheet.hideColumns(7, 5);
     if ((31 - getNumDaysOfMonth(resAddSheetName)) == 0) {
 
