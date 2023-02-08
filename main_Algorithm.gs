@@ -369,55 +369,42 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
           arrToSet.push(newArr);
           arrToSetDataValidations.push(newArrDataValidations);
         } else if (arrRepitWeek != undefined) {
-          let newtArr = new Array(arrOfDayasOfWeek.length).fill("");
+          let newArr = new Array(arrOfDayasOfWeek.length).fill("");
           let newArrDataValidations = new Array(arrOfDayasOfWeek.length).fill("");
           let arrIndexesRes = [];
           arrIndexesRes = getReversedIndexsesStartWeek(arrOfDayasOfWeek, arrRepitWeek, reverse)
-              arrIndexesRes.map(item => {
-                let counter = 0;
-                arrTemplates[i].map(itemArrTemplate => {
-                  newtArr[item + counter] = itemArrTemplate;
-                  counter++
-                })
-                counter = 0;
-                arrTemplatesDataValidations[i].map(itemArrTemplateDatavalidations => {
-                  newArrDataValidations[item + counter] = itemArrTemplateDatavalidations;
-                  counter++
-                })
-              })
-            
-            Logger.log("newtArr")
-            Logger.log(newtArr)
-            Logger.log("newtArr")
-            Logger.log(newArrDataValidations)
-
-          
-          arrToSet.push(newtArr);
-          // arrToSetDataValidations.push(newtArrDataValidations);
-          // Logger.log("newtArr")
-          // Logger.log(newtArr)
-          // arrToSetDataValidations.push(newtArrDataValidations);
-          // Logger.log(newtArrDataValidations)
+          arrIndexesRes.map(item => {
+            let counter = 0;
+            arrTemplates[i].map(itemArrTemplate => {
+              newArr[item + counter] = itemArrTemplate;
+              counter++
+            })
+            counter = 0;
+            arrTemplatesDataValidations[i].map(itemArrTemplateDatavalidations => {
+              newArrDataValidations[item + counter] = itemArrTemplateDatavalidations;
+              counter++
+            })
+          })
+          arrToSet.push(newArr);
+          arrToSetDataValidations.push(newArrDataValidations);
         }
 
       }
 
       if (repeatFormula.toString().startsWith("Every")) {
-        let everyArr = [];
+
         if (whichDays == "Everyday" || whichDays == "") {
 
           let counter = 0;
-          arrOfDayasOfWeek.map((itemArr, indexArr) => {
-            if (newtArr.length < arrOfDayasOfWeek.length) {
-
-              arrTemplates[i].map((item, indexTempl) => {
-                newtArr[counter] = item;
-                counter++;
-              })
-            }
-          })
-          if (newtArr.length > arrOfDayasOfWeek.length) {
-            newtArr.splice(arrOfDayasOfWeek.length)
+          Logger.log("arrTemplates[i]")
+          Logger.log(arrTemplates[i])
+          Logger.log("arrTemplatesDataValidations[i]")
+          Logger.log(arrTemplatesDataValidations[i])
+          for(let  s = 0; s< arrOfDayasOfWeek.length; s++) {
+            if(counter == arrTemplates[i].length ) {counter = 0}
+            newArr[s] = arrTemplates[i][counter];
+            newArrDataValidations[s] = arrTemplatesDataValidations[i][counter];
+            counter++;
           }
         }
 
@@ -425,79 +412,60 @@ async function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek
           let counter = 0;
           for (let f = 0; f <= arrOfDayasOfWeek.length - 1; f++) {
             if (arrOfDayasOfWeek[f] >= 1 && arrOfDayasOfWeek[f] <= 5) {
-              everyArr.push(arrTemplates[i][counter]);
+              newArr[f] = arrTemplates[i][counter];
+              newArrDataValidations[f] = arrTemplatesDataValidations[i][counter];
               if (counter == arrTemplates[i].length - 1) {
                 counter = 0;
               } else {
                 counter++;
               }
             } else {
-              everyArr.push("");
-              if (counter == arrTemplates[i].length - 1) {
-                counter = 0;
-              }
+              newArr[f] = "";
+              newArrDataValidations[f] = null;
             }
           }
 
-          everyArr.splice(arrOfDayasOfWeek.length);
-          newtArr = everyArr;
         }
 
         if (whichDays == "Weekends") {
           let counter = 0;
           for (let f = 0; f <= arrOfDayasOfWeek.length - 1; f++) {
             if (arrOfDayasOfWeek[f] == 0 || arrOfDayasOfWeek[f] == 6) {
-              everyArr.push(arrTemplates[i][counter]);
+              newArr[f] = arrTemplates[i][counter];
+              newArrDataValidations[f] = arrTemplatesDataValidations[i][counter];
               if (counter == arrTemplates[i].length - 1) {
                 counter = 0;
               } else {
                 counter++;
               }
             } else {
-              everyArr.push("");
-              if (counter == arrTemplates[i].length - 1) {
-                counter = 0;
-              }
+              newArr[f] = "";
+              newArrDataValidations[f] = null;
             }
           }
 
-          everyArr.splice(arrOfDayasOfWeek.length);
-          newtArr = everyArr;
         }
 
         if (whichDays == "Skip Sunday") {
           let counter = 0;
           for (let f = 0; f <= arrOfDayasOfWeek.length - 1; f++) {
             if (arrOfDayasOfWeek[f] != 0) {
-              everyArr.push(arrTemplates[i][counter]);
+              newArr[f] = arrTemplates[i][counter];
+              newArrDataValidations[f] = arrTemplatesDataValidations[i][counter];
               if (counter == arrTemplates[i].length - 1) {
                 counter = 0;
               } else {
                 counter++;
               }
             } else {
-              everyArr.push("");
-              if (counter == arrTemplates[i].length - 1) {
-                counter = 0;
-              }
+              newArr[f] = "";
+              newArrDataValidations[f] = null;
             }
           }
 
-          everyArr.splice(arrOfDayasOfWeek.length);
-          newtArr = everyArr;
         }
-        if (newtArr.length > arrOfDayasOfWeek.length) {
-          newtArr.splice(arrOfDayasOfWeek.length)
-        }
-        arrToSet.push(newtArr);
-        Logger.log("END OF MONTHLY")
-        Logger.log(newArr)
-        Logger.log(newArrDataValidations)
         arrToSet.push(newArr);
         arrToSetDataValidations.push(newArrDataValidations);
-        Logger.log("END OF MONTHLY arrToSet")
-        Logger.log(arrToSet)
-        Logger.log(arrToSetDataValidations)
       }
       if (repeatFormula == "") {
         arrToSet.push([""])

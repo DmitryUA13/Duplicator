@@ -16,6 +16,10 @@ function getWeekEveryday(arrToSet, arrOfDayasOfWeek, arrTemplates, reverse, arrT
   return [newArr, newArrDataValidations];
 }
 
+
+/**
+ * Функция возвращает массивы РЕВЕРСОВ шаблонов Данных и Валидации Данных
+ */
 function getReversedTemplates(whichDays, arrTemplates, arrTemplatesDataValidations) {
   let arrTmpl = [];
   let arrTmplDatavalidations = [];
@@ -48,6 +52,9 @@ function getReversedTemplates(whichDays, arrTemplates, arrTemplatesDataValidatio
   return [arrTemplates, arrTemplatesDataValidations];
 }
 
+/**
+ * Функция возвращает индексы с выбранными понедельниками Weekly 1/3 или 2/4 или 1 и т.п.
+ */
 function getReversedIndexsesStartWeek(arrOfDayasOfWeek, arrRepitWeek, reverse) {
   let arrIndexesRes = [];
   let resfindedIndexes = [];
