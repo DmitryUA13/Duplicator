@@ -1,4 +1,4 @@
-const sprSheetId = "1aRvc9y3ci4gt6ErAg4yjHbnzp-qC049WdtbI5o61aJg" //Worksheet ID
+const sprSheetId = "" //Worksheet ID
 const template = 'Template';//Sheet title Template
 const daysRange = "L4:AP"; //Range with data under dates
 const monthCell = "L1"; //Cell with main date
