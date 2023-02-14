@@ -1,6 +1,6 @@
 
 
-function mainAlgorithm(sheetName = "2023-04") {
+function mainAlgorithm(sheetName) {
   const sheet = mainSpSheet.getSheetByName(sheetName);
   const dataTemlate = sheet.getRange(daysRange).getValues(); //данные из таблицы Дэйс
   const dataTemlateDtataValidations = sheet.getRange(daysRange).getDataValidations();
@@ -28,7 +28,7 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
     let arrToSetDataValidations = [];
 
     for (let i = 0; i < arrTemplates.length; i++) {
-      
+
       let newArr = [];
       let newArrDataValidations = [];
       let arrDataTmpr = [];
@@ -38,7 +38,7 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
       let whichDays = presetation[i][0];
       const reg = new RegExp('\\d', 'gm');
       const arrRepitWeek = repeatFormula.toString().match(reg);
-    
+
       if (repeatFormula == "Monthly") {
         let difference = arrTemplates[i].length - arrOfDayasOfWeek.length;
 
@@ -98,7 +98,8 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
 
           let countDaysAvailibleToFill = arrOfDayasOfWeek.filter(item => (item != 0 && item != 6)).length;
           let dataInCellsFull = arrTemplates[i].filter(item => item != "").length;
-
+          Logger.log(countDaysAvailibleToFill)
+          Logger.log(dataInCellsFull)
           let arrDataTmpr = [];
           let offset = 0;
           if (reverse) {
@@ -109,7 +110,7 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
                 if (arrOfDayasOfWeek[s] != 0 && arrOfDayasOfWeek[s] != 6) {
                   newArr[s] = arrTemplates[i][s + difference + offset];
                   newArrDataValidations[s] = arrTemplatesDataValidations[i][s + difference + offset];
-                  if (arrTemplates[i][s + offset] != "") { dataInCellsFull--; }
+                  if (arrTemplates[i][s + difference + offset] != "") { dataInCellsFull--; }
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
@@ -117,9 +118,18 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
                   offset++;
                 }
 
-              } else if (countDaysAvailibleToFill == dataInCellsFull) {
-                [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset + 1, reverse, s);
-                if (arrOfDayasOfWeek[s] != 0 && arrOfDayasOfWeek[s] != 6 && arrDataTmpr.length == 0) {
+              } else if (countDaysAvailibleToFill == dataInCellsFull && arrDataTmpr.length == 0) {
+                [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset, reverse, s);
+                Logger.log("arrDataTmpr")
+                Logger.log(arrDataTmpr)
+                Logger.log("arrDataTmprDataValidations")
+                Logger.log(arrDataTmprDataValidations)
+                  Logger.log("S: => " + s)
+                if (arrOfDayasOfWeek[s] != 0 && arrOfDayasOfWeek[s] != 6) {
+                  Logger.log("countDaysAvailibleToFill")
+                  Logger.log(countDaysAvailibleToFill)
+                  Logger.log("dataInCellsFull")
+                  Logger.log(dataInCellsFull)
                   newArr[s] = arrDataTmpr.pop();
                   newArrDataValidations[s] = arrDataTmprDataValidations.pop();
                 } else {
@@ -128,7 +138,11 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
                 }
               } else {
                 if (arrDataTmpr.length == 0) {
-                  [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset + 1, reverse, s);
+                  [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset, reverse, s);
+                  Logger.log("@arrDataTmpr")
+                  Logger.log(arrDataTmpr)
+                  Logger.log("@arrDataTmprDataValidations")
+                  Logger.log(arrDataTmprDataValidations)
                 }
                 if (arrOfDayasOfWeek[s] != 0 && arrOfDayasOfWeek[s] != 6) {
                   newArr[s] = arrDataTmpr.pop();
@@ -138,9 +152,9 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
                   newArrDataValidations[s] = "";
                 }
               }
+                Logger.log("@///   newArr")
+                Logger.log(newArr)
             }
-                  Logger.log("IN MAIN FN newArr")
-                  Logger.log(newArr)
           } else {
             for (let s = 0; s < arrOfDayasOfWeek.length; s++) {
               if (countDaysAvailibleToFill > dataInCellsFull) {
@@ -196,7 +210,7 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
                 if (arrOfDayasOfWeek[s] == 0 || arrOfDayasOfWeek[s] == 6) {
                   newArr[s] = arrTemplates[i][s + difference + offset];
                   newArrDataValidations[s] = arrTemplatesDataValidations[i][s + difference + offset];
-                  if (arrTemplates[i][s + offset] != "") { dataInCellsFull--; }
+                  if (arrTemplates[i][s + difference + offset] != "") { dataInCellsFull--; }
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
@@ -205,7 +219,7 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
                 }
 
               } else if (countDaysAvailibleToFill == dataInCellsFull && arrDataTmpr.length == 0) {
-                [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset + 1, reverse, s);
+                [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset, reverse, s);
                 if (arrOfDayasOfWeek[s] == 0 || arrOfDayasOfWeek[s] == 6) {
                   newArr[s] = arrDataTmpr.pop();
                   newArrDataValidations[s] = arrDataTmprDataValidations.pop();
@@ -216,7 +230,7 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
                 }
               } else {
                 if (arrDataTmpr.length == 0) {
-                  [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset + 1, reverse, s);
+                  [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset, reverse, s);
                 }
                 if (arrOfDayasOfWeek[s] == 0 || arrOfDayasOfWeek[s] == 6) {
                   newArr[s] = arrDataTmpr.pop();
@@ -284,7 +298,7 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
                 if (arrOfDayasOfWeek[s] != 0) {
                   newArr[s] = arrTemplates[i][s + difference + offset];
                   newArrDataValidations[s] = arrTemplatesDataValidations[i][s + difference + offset];
-                  if (arrTemplates[i][s + offset] != "") { dataInCellsFull--; }
+                  if (arrTemplates[i][s + difference + offset] != "") { dataInCellsFull--; }
                   countDaysAvailibleToFill--;
                 } else {
                   newArr[s] = "";
@@ -293,7 +307,7 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
                 }
 
               } else if (countDaysAvailibleToFill == dataInCellsFull && arrDataTmpr.length == 0) {
-                [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset + 1, reverse, s);
+                [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset, reverse, s);
                 if (arrOfDayasOfWeek[s] != 0) {
                   newArr[s] = arrDataTmpr.pop();
                   newArrDataValidations[s] = arrDataTmprDataValidations.pop();
@@ -304,7 +318,7 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
                 }
               } else {
                 if (arrDataTmpr.length == 0) {
-                  [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset + 1, reverse, s);
+                  [arrDataTmpr, arrDataTmprDataValidations] = getMontlyEveryday(arrTemplates[i], arrTemplatesDataValidations[i], s + difference + offset, reverse, s);
                 }
                 if (arrOfDayasOfWeek[s] != 0) {
                   newArr[s] = arrDataTmpr.pop();
@@ -371,23 +385,21 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
           let newArrDataValidations = new Array(arrOfDayasOfWeek.length).fill("");
           let arrIndexesRes = [];
           arrIndexesRes = getReversedIndexsesStartWeek(arrOfDayasOfWeek, arrRepitWeek, reverse)
-          if(arrIndexesRes.length >0){
-              arrIndexesRes.map(item => {
-                let counter = 0;
-                arrTemplates[i].map(itemArrTemplate => {
-                  newArr[item + counter] = itemArrTemplate;
-                  counter++
-                })
-                Logger.log(counter)
-                counter = 0;
-                Logger.log(arrTemplatesDataValidations[i])
-                arrTemplatesDataValidations[i].map(itemArrTemplateDatavalidations => {
-                  newArrDataValidations[item + counter] = itemArrTemplateDatavalidations;
-                  counter++
-                })
+          if (arrIndexesRes.length > 0) {
+            arrIndexesRes.map(item => {
+              let counter = 0;
+              arrTemplates[i].map(itemArrTemplate => {
+                newArr[item + counter] = itemArrTemplate;
+                counter++
               })
+              counter = 0;
+              arrTemplatesDataValidations[i].map(itemArrTemplateDatavalidations => {
+                newArrDataValidations[item + counter] = itemArrTemplateDatavalidations;
+                counter++
+              })
+            })
           }
-          
+
           arrToSet.push(newArr);
           arrToSetDataValidations.push(newArrDataValidations);
         }
@@ -395,7 +407,6 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
       }
 
       if (repeatFormula.toString().startsWith("Every")) {
-        Logger.log("dasdad")
         if (whichDays == "Everyday" || whichDays == "") {
 
           let counter = 0;
@@ -466,24 +477,12 @@ function getFulldataToSet(arrTemplates = [], presetation, arrOfDayasOfWeek = [],
         }
         arrToSet.push(newArr);
         arrToSetDataValidations.push(newArrDataValidations);
-        // Logger.log("Every newArr")
-        // Logger.log(newArr)
-        // Logger.log("Every newArrDataValidations")
-        // Logger.log(newArrDataValidations)
       }
       if (repeatFormula == "") {
-        // Logger.log("ERROEOEOEOEO")
         arrToSet.push(new Array(arrOfDayasOfWeek.length).fill(""))
         arrToSetDataValidations.push(new Array(arrOfDayasOfWeek.length).fill(""));
       }
-    // Logger.log("arrToSet");
-    // Logger.log(arrToSet);
-    // Logger.log("arrToSetDataValidations");
-    // Logger.log(arrToSetDataValidations);
     }
-      
-    // Logger.log(repeatFormula + " " + whichDays + ". Номер строки: " + i);
-    // Logger.log(arrToSetDataValidations);
 
     return [arrToSet, arrToSetDataValidations];
   } catch (e) {

@@ -1,10 +1,10 @@
-const sprSheetId = "" //Worksheet ID
+// const sprSheetId = "1aRvc9y3ci4gt6ErAg4yjHbnzp-qC049WdtbI5o61aJg" //Worksheet ID
 const template = 'Template';//Sheet title Template
 const daysRange = "L4:AP"; //Range with data under dates
 const monthCell = "L1"; //Cell with main date
 const presetationRange = "G4:K"; //Range with Settings
 const numberAndDaysInDuplRange = "L3:AP3"; //the range with dates (numbers and days of  week);
-const mainSpSheet = SpreadsheetApp.openById(sprSheetId);//The table itself
+const mainSpSheet = SpreadsheetApp.getActiveSpreadsheet();//The table itself
 const sheetTemp = mainSpSheet.getSheetByName(template);//Page Template
 const dayOfMonthNumbersRange = "L2:AP2";
 
@@ -19,7 +19,6 @@ function mainFn(formObjectObj) {
   let trueRes = mainAlgorithm(resAddSheetName);
  let [endArrRes, endArrDataValidationsRes] = trueRes;
  endArrDataValidationsRes = endArrDataValidationsRes.map(item => item.map(it => it == '' ? it = null : it));
- Logger.log(endArrDataValidationsRes);
 
   try {
     duplicatedSheet.getRange(4, 12, endArrRes.length, 40).clearContent().clearDataValidations();
